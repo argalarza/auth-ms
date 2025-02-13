@@ -26,7 +26,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t auth-ms-prod -f auth-ms/Dockerfile.prod .  # Construye la imagen Docker de producción usando el Dockerfile.
+        docker build -t auth-ms-prod -f auth-ms/dockerfile.prod .  # Construye la imagen Docker de producción usando el Dockerfile.
 
     - name: Deploy to EC2 via SSH
       uses: appleboy/ssh-action@v0.1.5  # Esta acción se conecta a tu EC2 y ejecuta comandos a través de SSH.
