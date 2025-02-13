@@ -26,7 +26,7 @@ jobs:
         username: ${{ secrets.EC2_USER }}  # Nombre de usuario de tu EC2
         key: ${{ secrets.EC2_PRIVATE_KEY }}  # La clave privada para SSH
         script: |
-          cd /path/to/your/app
+          /home/ec2-user/auth-ms
           
           # Detener cualquier contenedor en ejecución y eliminar redes, volúmenes, etc.
           docker-compose down
