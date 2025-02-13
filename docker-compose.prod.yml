@@ -5,7 +5,7 @@ services:
     build:
       context: ./auth-ms
       dockerfile: dockerfile.prod
-    image: auth-ms-prod
+    image: agente47/auth-ms:latest
     environment:
       - PORT=3004
       - NATS_SERVERS=nats://nats-server:4222
