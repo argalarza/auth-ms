@@ -3,34 +3,34 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - master  # Cambia a la rama principal si es necesario
+      - master  # Asegúrate de cambiar esto si usas otra rama principal
 
 jobs:
-  build_and_deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout código fuente
+    - name: 🚀 Checkout del código
       uses: actions/checkout@v3
 
-    - name: Deploy en EC2 vía SSH
+    - name: 🔑 Acceder a EC2 y desplegar
       uses: appleboy/ssh-action@v0.1.5
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         script: |
-          echo "🚀 Iniciando despliegue en EC2"
+          echo "🚀 Iniciando despliegue en EC2..."
 
-          # Crear directorio de trabajo si no existe
-          mkdir -p /home/ec2-user/auth-ms
-          cd /home/ec2-user/auth-ms
+          # Crear el directorio de la app si no existe
+          mkdir -p /home/${{ secrets.EC2_USER }}/auth-ms
+          cd /home/${{ secrets.EC2_USER }}/auth-ms
 
-          echo "📦 Clonando el código fuente..."
+          echo "📦 Clonando o actualizando código fuente..."
           if [ -d "auth-ms" ]; then
-            cd auth-ms && git pull origin master
+            cd auth-ms && git reset --hard && git pull origin master
           else
-            git clone -b master https://github.com/TU_USUARIO/TU_REPO.git auth-ms
+            git clone -b master https://github.com/${{ secrets.GITHUB_REPO }}.git auth-ms
             cd auth-ms
           fi
 
@@ -41,11 +41,11 @@ jobs:
           PORT=3000
           EOF
 
-          echo "🔄 Construyendo la imagen de Docker localmente..."
+          echo "🛠️ Construyendo y levantando los contenedores..."
           docker-compose down --remove-orphans
           docker-compose up --build -d
 
-          echo "🔍 Verificando que el contenedor está corriendo..."
-          docker ps | grep auth-ms || { echo "⚠️ Error: El contenedor no se inició correctamente."; exit 1; }
+          echo "🔍 Verificando que el servicio está corriendo..."
+          docker ps | grep auth-ms || { echo "⚠️ ERROR: El contenedor no se inició correctamente."; exit 1; }
 
           echo "✅ Despliegue completado exitosamente."
