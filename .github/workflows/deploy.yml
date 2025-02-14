@@ -30,7 +30,7 @@ jobs:
           if [ -d "auth-ms" ]; then
             cd auth-ms && git reset --hard && git pull origin master
           else
-            git clone -b master https://github.com/${{ secrets.GITHUB_REPO }}.git auth-ms
+            git clone -b master https://github.com/argalarza/auth-ms.git auth-ms
             cd auth-ms
           fi
 
