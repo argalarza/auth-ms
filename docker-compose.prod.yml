@@ -6,6 +6,8 @@ services:
       context: ../auth-ms
       dockerfile: dockerfile.prod
     image: auth-ms
+    env_file:
+      - .env  
     environment:
       - PORT=${PORT}
       - DATABASE_URL=${DATABASE_URL}
