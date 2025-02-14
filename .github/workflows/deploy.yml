@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 🚀 Checkout del código
+    - name: 🚀 Checkout del código.
       uses: actions/checkout@v3
 
     - name: 🔑 Acceder a EC2 y desplegar
