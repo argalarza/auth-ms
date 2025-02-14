@@ -3,38 +3,36 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - master  # Este paso se ejecutará cuando haya un push a la rama 'main'
+      - master  # Cambiar a tu rama principal si es necesario
 
 jobs:
   build_and_deploy:
-    runs-on: ubuntu-latest  # Se ejecuta en una máquina virtual con Ubuntu
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3  # Este paso descarga el código fuente del repositorio.
+      uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2  # Habilita la acción Buildx para construir imágenes Docker de manera avanzada.
-
-    - name: Cache Docker layers
-      uses: actions/cache@v2  # Caching de capas Docker para acelerar las construcciones posteriores.
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
       with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
-
-    - name: Build Docker image
-      run: |
-        docker build -t auth-ms-prod -f auth-ms/dockerfile.prod .  # Construye la imagen Docker de producción usando el Dockerfile.
+        username: ${{ secrets.DOCKER_USERNAME }}   # Tu usuario de Docker Hub
+        password: ${{ secrets.DOCKER_PASSWORD }}   # Tu clave de Docker Hub
 
     - name: Deploy to EC2 via SSH
-      uses: appleboy/ssh-action@v0.1.5  # Esta acción se conecta a tu EC2 y ejecuta comandos a través de SSH.
+      uses: appleboy/ssh-action@v0.1.5
       with:
-        host: ${{ secrets.EC2_HOST }}  # Utiliza el secreto EC2_HOST
-        username: ${{ secrets.EC2_USER }}  # Utiliza el secreto EC2_USER
-        key: ${{ secrets.EC2_PRIVATE_KEY }}  # Utiliza el secreto EC2_PRIVATE_KEY
+        host: ${{ secrets.EC2_HOST }}  # IP pública o nombre de host de tu instancia EC2
+        username: ${{ secrets.EC2_USER }}  # Nombre de usuario de tu EC2
+        key: ${{ secrets.EC2_PRIVATE_KEY }}  # La clave privada para SSH
         script: |
-          cd /path/to/your/app  # Navega al directorio donde se encuentra tu aplicación en EC2.
-          docker-compose down  # Detiene cualquier contenedor Docker que se esté ejecutando.
-          docker-compose up -d  # Vuelve a levantar los contenedores en segundo plano.
+          /home/ec2-user/auth-ms
+          
+          # Detener cualquier contenedor en ejecución y eliminar redes, volúmenes, etc.
+          docker-compose down
+
+          # Asegurarse de que la imagen más reciente esté descargada desde Docker Hub
+          docker pull agente47/auth-ms:latest
+
+          # Ejecutar Docker Compose para iniciar los contenedores en segundo plano
+          docker-compose up -d
