@@ -7,7 +7,7 @@ services:
       dockerfile: dockerfile.prod
     image: auth-ms
     environment:
-      - PORT=3000
+      - PORT=${PORT}
       - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET}
     ports:
