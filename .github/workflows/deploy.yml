@@ -42,8 +42,8 @@ jobs:
           EOF
 
           echo "🛠️ Construyendo y levantando los contenedores..."
-          docker-compose.prod.yml down --remove-orphans
-          docker-compose.prod.yml up --build -d
+          docker-compose -f docker-compose.prod.yml down --remove-orphans
+          docker-compose -f docker-compose.prod.yml up --build -d
 
           echo "🔍 Verificando que el servicio está corriendo..."
           docker ps | grep auth-ms || { echo "⚠️ ERROR: El contenedor no se inició correctamente."; exit 1; }
