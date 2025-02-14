@@ -3,13 +3,18 @@ version: '3'
 services:
   auth-ms:
     build:
-      context: ./auth-ms
+      context: ../auth-ms
       dockerfile: dockerfile.prod
-    image: agente47/auth-ms:latest
+    image: auth-ms
     environment:
-      - PORT=3004
-      - NATS_SERVERS=nats://nats-server:4222
-      - DATABASE_URL=${AUTH_DATABASE_URL}
+      - PORT=3000
+      - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "3000:3000"
     networks:
-      - microservices_network
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
